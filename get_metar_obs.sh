@@ -7,11 +7,15 @@ for (( date="$startdate"; date != enddate; )); do
     files=()
     pids=()
     for i in {00..23}; do 
+        year=${date:0:4}
+        month=${date:4:2}
+        day=${date:6:2}
         hour=("$date"_"$i"00) 
-        dest_file=/climate/data/metar/$hour-metar.dat
+        dest_file=/climate/data/metar/$hour.dat.gz
         if ! [ -s $dest_file ]
         then
-           wget -q --output-document=$dest_file "https://madis-data.ncep.noaa.gov/madisPublic1/cgi-bin/madisXmlPublicDir?rdr=&time="$hour"_0000&minbck=-59&minfwd=0&recwin=3&dfltrsel=0&state=AK&latll=0.0&lonll=0.0&latur=90.0&lonur=0.0&stanam=&stasel=0&pvdrsel=0&varsel=1&qcsel=99&xml=4&csvmiss=1&nvars=RAWMTR" &
+            #https://madis-data.ncep.noaa.gov/madisPublic1/data/archive/2001/07/01/point/metar/netcdf/
+            wget -q --output-document=$dest_file "https://madis-data.ncep.noaa.gov/madisPublic1/data/archive/"$year"/"$month"/"$day"/point/metar/netcdf/"$hour".gz" &
             pids+=( "$!" )
             files+=( "$dest_file" )
         fi
